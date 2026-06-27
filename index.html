@@ -6,16 +6,76 @@
     <meta name="app-version" content="1.3">
     <title>我的世界下载器 V1.3</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: sans-serif; background: #000; color: #fff; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; }
-        #particles-js { position: fixed; width: 100%; height: 100%; z-index: 0; }
-        .container { position: relative; z-index: 1; text-align: center; background: rgba(30,30,30,0.85); padding: 40px; border-radius: 10px; backdrop-filter: blur(5px); }
-        .logo { max-width: 150px; margin-bottom: 20px; border-radius: 10px; }
-        h1 { margin-bottom: 10px; font-size: 24px; }
-        .version { font-size: 20px; color: #4CAF50; margin-bottom: 20px; }
-        p { margin-bottom: 30px; color: #ccc; }
-        .btn { background: #4CAF50; color: white; border: none; padding: 15px 32px; font-size: 16px; cursor: pointer; border-radius: 5px; width: 80%; transition: 0.3s; }
-        .btn:hover { background: #45a049; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            z-index: 1;
+        }
+        .container {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .version {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .description {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -23,22 +83,55 @@
     <div id="particles-js"></div>
 
     <div class="container">
-        <img src="logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+        <img src="logo.png" alt="Minecraft Logo" class="logo" onerror="this.style.display='none'">
+        
         <h1>我的世界下载器</h1>
         <div class="version">V1.3</div>
-        <p>点击按钮检查更新。</p>
+        <div class="description" id="updateDesc">欢迎使用！</div>
+        
         <button class="btn" onclick="checkForUpdate()">选择版本下载</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
     <script>
-        particlesJS("particles-js", {
-            particles: { number: { value: 80 }, color: { value: "#ffffff" }, shape: { type: "circle" }, opacity: { value: 0.5 }, size: { value: 3 }, line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4 }, move: { enable: true, speed: 6 } },
-            interactivity: { events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" } } }
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" }
+                }
+            },
+            "retina_detect": true
         });
 
         function checkForUpdate() {
             const localVersion = document.querySelector('meta[name="app-version"]').getAttribute('content');
+            
             fetch('version.json?v=' + new Date().getTime())
                 .then(res => res.json())
                 .then(data => {
