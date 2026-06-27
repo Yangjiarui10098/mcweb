@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN" id="htmlRoot">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title data-i18n="title">下载 《我的世界》</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+<style>
+:root { --mc-green:#43af3a; }
+* { margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;-webkit-tap-highlight-color:transparent; }
+body { font-family:"Segoe UI",sans-serif;background:#000;color:#fff;height:100dvh;overflow:hidden; }
+#particles { position:fixed;inset:0;z-index:1; }
+
+.container { position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100dvh;padding:20px;text-align:center; }
+
+.lang-switch { position:absolute;top:20px;right:20px;z-index:100; }
+.lang-switch button { background:#1a1a1a;border:1px solid #333;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px; }
+
+.logo { width:100px;margin-bottom:15px;filter:drop-shadow(0 0 15px rgba(67,175,58,.7));animation:float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);} }
+
+h1 { font-family:"Press Start 2P",cursive;font-size:22px;color:var(--mc-green);text-shadow:0 0 8px var(--mc-green);margin-bottom:10px; }
+p { font-size:14px;color:#aaa;margin-bottom:30px;line-height:1.5; }
+
+.download-btn { display:inline-flex;align-items:center;gap:10px;background:linear-gradient(145deg,var(--mc-green),#2e8b23);color:#fff;padding:16px 40px;border-radius:8px;font-size:16px;font-weight:bold;border:2px solid var(--mc-green);box-shadow:0 0 15px rgba(67,175,58,.5);cursor:pointer; }
+
+.modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;display:flex;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity .3s ease; }
+.modal-overlay.active { opacity:1;pointer-events:auto; }
+.modal { background:#111;border:2px solid var(--mc-green);border-radius:12px;padding:25px 20px;width:90%;max-width:340px;transform:translateY(20px);transition:transform .3s ease; }
+.modal-overlay.active .modal { transform:translateY(0); }
+
+.modal h2 { font-family:"Press Start 2P",cursive;font-size:14px;color:var(--mc-green);margin-bottom:20px; }
+.version-list { display:flex;flex-direction:column;gap:12px; }
+.version-item { display:flex;align-items:center;gap:12px;background:#1a1a1a;padding:14px;border-radius:8px;text-decoration:none;color:#fff;border:1px solid #333;transition:all .2s ease; }
+.version-item:hover,.version-item:active { background:var(--mc-green);border-color:var(--mc-green); }
+.version-icon { font-size:22px; }
+.version-text span { font-size:13px;color:#aaa; }
+.close-btn { margin-top:20px;background:transparent;border:1px solid #444;color:#888;padding:10px 20px;border-radius:6px;font-size:12px;cursor:pointer; }
+
+.footer-signature { position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;flex-direction:column;align-items:center;padding:18px 20px 16px;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.6) 60%,transparent 100%);pointer-events:none; }
+.signature-line { display:flex;align-items:center;gap:12px;margin-bottom:8px; }
+.signature-line::before,.signature-line::after { content:"";width:40px;height:1px;background:linear-gradient(to right,transparent,var(--mc-green),transparent);opacity:.6; }
+.signature-icon { font-size:14px;animation:pulse-glow 2s ease-in-out infinite; }
+@keyframes pulse-glow { 0%,100%{opacity:.6;}50%{opacity:1;} }
+.signature-text { font-family:"Press Start 2P",cursive;font-size:9px;color:var(--mc-green);letter-spacing:2px;text-shadow:0 0 6px rgba(67,175,58,.6); }
+.signature-sub { font-size:11px;color:#555;letter-spacing:1px; }
+.signature-sub span { color:#666; }
+
+@media(min-width:768px){ .logo{width:130px;}h1{font-size:28px;}p{font-size:16px;} }
+</style>
+</head>
+
+<body>
+<canvas id="particles"></canvas>
+
+<div class="container">
+    <div class="lang-switch">
+        <button onclick="toggleLang()" id="langBtn">English</button>
+    </div>
+
+    <svg class="logo" viewBox="0 0 24 24">
+        <path d="M4 4H20V20H4V4Z" fill="#6B8F3B"/>
+        <path d="M4 4H20V12H4V4Z" fill="#8BC34A"/>
+        <path d="M4 12H20V20H4V12Z" fill="#558B2F"/>
+        <rect x="4" y="4" width="16" height="16" stroke="#4B772D" stroke-width="2"/>
+    </svg>
+
+    <h1 data-i18n="mainTitle">MINECRAFT</h1>
+    <p data-i18n="subtitle">开启你的方块世界冒险</p>
+
+    <button class="download-btn" onclick="openModal()">
+        📦 <span data-i18n="selectVersion">选择版本下载</span>
+    </button>
+</div>
+
+<div class="footer-signature">
+    <div class="signature-line">
+        <span class="signature-icon">⬢</span>
+        <span class="signature-text" data-i18n="sigText">CRAFTED WITH LOVE</span>
+        <span class="signature-icon">⬢</span>
+    </div>
+    <div class="signature-sub">
+        <span data-i18n="sigSub">© 2026 Minecraft Download Center</span>
+    </div>
+</div>
+
+<!-- ===== 弹窗 ===== -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <h2 data-i18n="modalTitle">选择下载版本</h2>
+        <div class="version-list">
+            <a class="version-item" href="https://mc.163.com/" target="_blank">
+                <div class="version-icon">🪟</div>
+                <div class="version-text">Windows / PC<br><span data-i18n="pcDesc">Java & 基岩版</span></div>
+            </a>
+            <a class="version-item" href="https://mc.163.com/mobile/" target="_blank">
+                <div class="version-icon">🤖</div>
+                <div class="version-text">Android<br><span data-i18n="androidDesc">手机版 / 平板</span></div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ===== 弹窗 ===== */
+function openModal(){
+    document.getElementById("modal").classList.add("active");
+}
+function closeModal(e){
+    if(e.target.id==="modal"){
+        document.getElementById("modal").classList.remove("active");
+    }
+}
+
+/* ===== 粒子背景 ===== */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let particles=[];
+function resize(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resize);
+resize();
+
+for(let i=0;i<80;i++){
+    particles.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        r:Math.random()*1.5+0.5,
+        d:Math.random()*0.5+0.2
+    });
+}
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="rgba(67,175,58,0.6)";
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+        p.y+=p.d;
+        if(p.y>canvas.height)p.y=0;
+    });
+    requestAnimationFrame(draw);
+}
+draw();
+
+/* ===== 语言切换（示例）===== */
+const i18n={
+ zh:{btn:"English",title:"下载 《我的世界》",mainTitle:"MINECRAFT",subtitle:"开启你的方块世界冒险",selectVersion:"选择版本下载",modalTitle:"选择下载版本",pcDesc:"Java & 基岩版",androidDesc:"手机版 / 平板",sigText:"CRAFTED WITH LOVE",sigSub:"© 2026 Minecraft Download Center"},
+ en:{btn:"中文",title:"Download Minecraft",mainTitle:"MINECRAFT",subtitle:"Start your block world adventure",selectVersion:"Select Version",modalTitle:"Select Version",pcDesc:"Java & Bedrock",androidDesc:"Mobile / Tablet",sigText:"CRAFTED WITH LOVE",sigSub:"© 2026 Minecraft Download Center"}
+};
+let lang="zh";
+function toggleLang(){
+    lang=lang==="zh"?"en":"zh";
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const k=el.getAttribute("data-i18n");
+        if(i18n[lang][k]) el.innerHTML=i18n[lang][k];
+    });
+    document.getElementById("langBtn").innerText=i18n[lang].btn;
+}
+</script>
+</body>
+</html>
