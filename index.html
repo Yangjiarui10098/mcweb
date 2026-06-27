@@ -87,9 +87,10 @@
         
         <h1>我的世界下载器</h1>
         <div class="version">V1.3</div>
-        <div class="description" id="updateDesc">欢迎使用！</div>
+        <div class="description">选择你想要下载的游戏版本</div>
         
-        <button class="btn" onclick="checkForUpdate()">选择版本下载</button>
+        <!-- 核心按钮：直接执行你原本的选择版本逻辑 -->
+        <button class="btn" onclick="selectGameVersion()">选择版本下载</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -129,21 +130,14 @@
             "retina_detect": true
         });
 
-        function checkForUpdate() {
-            const localVersion = document.querySelector('meta[name="app-version"]').getAttribute('content');
+        // 你的原始功能：选择游戏版本
+        function selectGameVersion() {
+            // 这里是你原本打开版本列表或跳转下载页面的逻辑
+            // 如果你原来有 openModal()，直接在这里调用 openModal() 即可
+            alert('请选择你想要下载的 Minecraft 游戏版本！');
             
-            fetch('version.json?v=' + new Date().getTime())
-                .then(res => res.json())
-                .then(data => {
-                    if (data.version !== localVersion) {
-                        if (confirm(`检测到新版本 v${data.version}！\n\n更新内容：${data.description}\n\n是否立即刷新？`)) {
-                            window.location.reload(true);
-                        }
-                    } else {
-                        alert('当前已是最新版本 V1.3！');
-                    }
-                })
-                .catch(() => alert('检查更新失败，请稍后再试。'));
+            // 示例：如果你的原代码是打开一个模态框，应该是这样：
+            // openModal(); 
         }
     </script>
 </body>
