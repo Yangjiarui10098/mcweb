@@ -18,6 +18,10 @@ body { font-family:"Segoe UI",sans-serif;background:#000;color:#fff;height:100dv
 .lang-switch { position:absolute;top:20px;right:20px;z-index:100; }
 .lang-switch button { background:#1a1a1a;border:1px solid #333;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px; }
 
+.version-badge { position:absolute;top:20px;left:20px;z-index:100;display:flex;align-items:center;gap:6px;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:6px 12px; }
+.version-badge .ver-icon { font-size:12px;opacity:.7; }
+.version-badge .ver-text { font-family:"Press Start 2P",cursive;font-size:10px;color:var(--mc-green);letter-spacing:1px; }
+
 .logo { width:100px;margin-bottom:15px;filter:drop-shadow(0 0 15px rgba(67,175,58,.7));animation:float 3s ease-in-out infinite; }
 @keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);} }
 
@@ -58,6 +62,11 @@ p { font-size:14px;color:#aaa;margin-bottom:30px;line-height:1.5; }
 <div class="container">
     <div class="lang-switch">
         <button onclick="toggleLang()" id="langBtn">English</button>
+    </div>
+
+    <div class="version-badge">
+        <span class="ver-icon">📋</span>
+        <span class="ver-text" data-i18n="version">v1.2</span>
     </div>
 
     <svg class="logo" viewBox="0 0 24 24">
@@ -149,8 +158,8 @@ draw();
 
 /* ===== 语言切换（示例）===== */
 const i18n={
- zh:{btn:"English",title:"下载 《我的世界》",mainTitle:"MINECRAFT",subtitle:"开启你的方块世界冒险",selectVersion:"选择版本下载",modalTitle:"选择下载版本",pcDesc:"Java & 基岩版",androidDesc:"手机版 / 平板",sigText:"CRAFTED WITH LOVE",sigSub:"© 2026 Minecraft Download Center"},
- en:{btn:"中文",title:"Download Minecraft",mainTitle:"MINECRAFT",subtitle:"Start your block world adventure",selectVersion:"Select Version",modalTitle:"Select Version",pcDesc:"Java & Bedrock",androidDesc:"Mobile / Tablet",sigText:"CRAFTED WITH LOVE",sigSub:"© 2026 Minecraft Download Center"}
+ zh:{btn:"English",title:"下载 《我的世界》",mainTitle:"MINECRAFT",subtitle:"开启你的方块世界冒险",selectVersion:"选择版本下载",modalTitle:"选择下载版本",pcDesc:"Java & 基岩版",androidDesc:"手机版 / 平板",sigText:"CRAFTED WITH LOVE",sigSub:"© 2026 Minecraft Download Center",version:"v1.2"},
+ en:{btn:"中文",title:"Download Minecraft",mainTitle:"MINECRAFT",subtitle:"Start your block world adventure",selectVersion:"Select Version",modalTitle:"Select Version",pcDesc:"Java & Bedrock",androidDesc:"Mobile / Tablet",sigText:"CRAFTED WITH LOVE",sigSub:"© 2026 Minecraft Download Center",version:"v1.2"}
 };
 let lang="zh";
 function toggleLang(){
