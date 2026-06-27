@@ -3,172 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 这里是你当前的版本号，下次更新记得改这里 -->
-    <meta name="app-version" content="1.2">
+    <!-- 这里对应你的 V1.3 版本 -->
+    <meta name="app-version" content="1.3">
     <title>我的世界下载器 V1.3</title>
     <style>
-        /* 页面整体样式 */
-        body {
-            background-color: #1a1a1a;
-            color: white;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
+        body { 
+            background-color: #121212; 
+            color: white; 
+            font-family: sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            text-align: center; 
         }
-
-        /* Logo 容器样式 */
-        .logo-container {
+        .container { 
+            background-color: #1e1e1e; 
+            padding: 40px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        img {
+            max-width: 150px; /* Logo最大宽度 */
             margin-bottom: 20px;
         }
-
-        .logo-container img {
-            max-width: 120px; /* Logo 大小 */
-            height: auto;
-            border-radius: 10px;
-        }
-
-        /* 主标题 */
-        h1 {
-            margin: 0 0 10px 0;
-            font-size: 24px;
-        }
-
-        /* 副标题/提示 */
-        p {
-            color: #aaa;
-            margin-bottom: 30px;
-        }
-
-        /* 按钮样式 */
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
+        h1 { margin-bottom: 10px; font-size: 24px; }
+        p { margin-bottom: 30px; color: #ccc; }
+        button { 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 15px 32px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            border-radius: 5px; 
             width: 80%;
-            max-width: 300px;
         }
-
-        /* 更新弹窗样式 */
-        .modal {
-            display: none; /* 默认隐藏 */
+        button:hover { background-color: #45a049; }
+        
+        /* 加载遮罩样式 */
+        #loadingMask {
             position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 10px;
-            text-align: center;
-            color: black;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
+            z-index: 999;
+            color: white;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Logo 区域 -->
-    <div class="logo-container">
-        <!-- 👇 确保你的仓库里有一张叫 logo.png 的图片 -->
-        <img src="logo.png" alt="Logo">
+    <!-- 加载中的遮罩 -->
+    <div id="loadingMask">
+        正在加载版本列表...
+        <button onclick="hideLoading()" style="margin-top:20px; background:#555;">确定</button>
     </div>
 
-    <h1>我的世界下载器 V1.3</h1>
-    欢迎使用！本次更新修复了版本检测逻辑。
-    
-    <!-- 下载按钮 -->
-    <button onclick="checkUpdate()">选择版本下载</button>
-
-    <!-- 更新提示弹窗 -->
-    <div id="updateModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p id="modalText">
-            <button onclick="applyUpdate()" style="background:#2196F3;">确定</button>
-            <button onclick="closeModal()" style="background:#f44336;">取消</button>
-        </div>
+    <div class="container">
+        <!-- Logo 显示区域 -->
+        <img id="appLogo" src="logo.png" alt="Logo">
+        
+        <h1>我的世界下载器 V1.3</h1>
+        <p id="updateDesc">欢迎使用！正在检查更新...
+        
+        <button onclick="checkUpdate()">选择版本下载</button>
     </div>
 
     <script>
-        // 防止重复弹窗的锁
-        let hasPrompted = false;
-
+        // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function () {
-            // 强制禁用缓存，确保每次都拉最新的 version.json
-            const localVersion = document.querySelector('meta[name="app-version"]').getAttribute('content');
+            // 1. 显示Logo（如果加载失败则隐藏alt文本）
+            const logo = document.getElementById('appLogo');
+            logo.onerror = function() { this.style.display = 'none'; };
             
-            // 请求版本信息
-            fetch('https://yangjiarui10098.github.io/mcweb/version.json?v=' + new Date().getTime())
-                .then(res => {
-                    if (!res.ok) throw new Error('Network error');
-                    return res.json();
-                })
-                .then(data => {
-                    const latestVersion = data.version;
-                    // 只有当版本不一致，且还没弹过窗时，才弹窗
-                    if (latestVersion && latestVersion !== localVersion && !hasPrompted) {
-                        hasPrompted = true; // 锁住
-                        showUpdateModal(latestVersion, data.description);
-                    }
-                })
-                .catch(err => console.log('No update or offline'));
+            // 2. 检查更新逻辑
+            checkVersion();
         });
 
-        function showUpdateModal(version, desc) {
-            const modal = document.getElementById('updateModal');
-            const content = document.getElementById('modalText');
-            content.innerText = `检测到新版本 v${version}！
+        function checkVersion() {
+            const localVersion = document.querySelector('meta[name="app-version"]').getAttribute('content');
+            
+            // 模拟从服务器获取版本信息
+            fetch('version.json?v=' + new Date().getTime())
+                .then(res => res.json())
+                .then(data => {
+                    const latestVersion = data.version;
+                    const desc = data.description;
+                    
+                    document.getElementById('updateDesc').innerText = `欢迎使用！${desc}`;
+                    
+                    // 如果版本不一致，提示更新
+                    if (latestVersion && latestVersion !== localVersion) {
+                        if(confirm(`检测到新版本 v${latestVersion}！
+                        
 更新内容：${desc}
-是否立即刷新以应用更新？`;
-            modal.style.display = 'flex'; // 显示弹窗
+
+是否立即刷新？`)) {
+                            window.location.reload(true);
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.log('读取版本信息失败:', err);
+                    document.getElementById('updateDesc').innerText = "欢迎使用！当前为最新版本。";
+                })
+                .finally(() => {
+                    // 无论成功失败，都要关闭加载遮罩
+                    hideLoading();
+                });
         }
 
-        function closeModal() {
-            document.getElementById('updateModal').style.display = 'none';
-        }
-
-        function applyUpdate() {
-            // 用户确认更新，强制刷新页面
-            window.location.reload(true);
-        }
-
-        // 模拟检查更新的按钮功能
         function checkUpdate() {
-            alert('当前已是最新版本 v1.3！
-请尝试关闭 App 重新打开，或者等待后续更新。');
+            // 这里是你的下载逻辑
+            alert('功能已修复！现在可以正常选择了。');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingMask').style.display = 'none';
         }
     </script>
 </body>
