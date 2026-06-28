@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="app-version" content="1.3B">
-    <title>我的世界下载器 V1.3B</title>
+    <meta name="app-version" content="1.4">
+    <title>我的世界下载器 V1.4</title>
     <style>
         * {
             margin: 0;
@@ -18,10 +18,39 @@
             overflow: hidden;
             position: relative;
             height: 100vh;
+        }
+
+        /* 启动页 */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 2000;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            color: white;
+            transition: opacity 0.5s;
         }
+        #splashScreen img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+        #splashScreen h1 {
+            color: #4CAF50;
+            font-size: 28px;
+        }
+        #splashScreen p {
+            font-size: 16px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        /* 粒子背景 */
         #particles-js {
             position: absolute;
             width: 100%;
@@ -29,24 +58,21 @@
             background-color: #000000;
             z-index: 1;
         }
+
+        /* 主容器 */
         .container {
             text-align: center;
             z-index: 2;
             position: relative;
+            padding-top: 60px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        .logo {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        /* 左上角版本号样式（已还原） */
+
+        /* 左上角版本号 */
         .version-display {
             position: absolute;
             top: 20px;
@@ -61,6 +87,19 @@
         .version-display span {
             color: #4CAF50;
             font-weight: bold;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         .description {
             font-size: 16px;
@@ -81,13 +120,14 @@
             box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
             position: relative;
             overflow: hidden;
+            margin-bottom: 15px;
         }
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
         }
 
-        /* 弹窗遮罩 */
+        /* 版本选择弹窗 */
         .modal-mask {
             display: none;
             position: fixed;
@@ -104,89 +144,298 @@
         .modal-box {
             background: #1e1e1e;
             border-radius: 12px;
-            padding: 30px;
-            width: 85%;
-            max-width: 320px;
+            padding: 20px;
+            width: 90%;
+            max-width: 350px;
             text-align: center;
             box-shadow: 0 0 30px rgba(0,0,0,0.6);
         }
         .modal-box h2 {
             font-size: 22px;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
-        .modal-box p {
-            font-size: 14px;
-            color: #aaa;
-            margin-bottom: 25px;
+        .modal-box p.subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 20px;
         }
-        .modal-btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+        .version-card {
+            background: #252525;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            text-align: left;
             cursor: pointer;
-            transition: 0.2s;
+            border: 1px solid transparent;
+            transition: all 0.2s;
         }
-        .modal-btn.international {
-            background: linear-gradient(135deg, #2196F3, #1976D2);
-            color: white;
+        .version-card:hover {
+            border-color: #4CAF50;
+            transform: scale(1.02);
         }
-        .modal-btn.netease {
-            background: linear-gradient(135deg, #E91E63, #C2185B);
-            color: white;
+        .version-card h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
         }
-        .modal-btn.cancel {
+        .version-card p {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+        .international h3 { color: #2196F3; }
+        .netease h3 { color: #E91E63; }
+        .java h3 { color: #FF9800; }
+        .cancel-btn {
             background: #444;
             color: #ccc;
-            margin-bottom: 0;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
         }
-        .modal-btn:hover {
-            filter: brightness(1.1);
+
+        /* 关于页 */
+        #aboutPage {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        #aboutPage .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #aboutPage .back-btn {
+            background: none;
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #aboutPage h1 {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 24px;
+        }
+        #aboutPage .content {
+            max-width: 600px;
+            margin: 0 auto;
+            color: #fff;
+        }
+        #aboutPage .section {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        #aboutPage h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        #aboutPage p, #aboutPage li {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        #aboutPage ul {
+            padding-left: 20px;
+        }
+        #aboutPage .log-date {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        #aboutPage .log-title {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        #aboutPage .log-content {
+            color: #aaa;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <!-- 左上角版本号（已修复） -->
-    <div class="version-display">当前版本: <span>V1.3B</span></div>
+    <!-- 启动页 -->
+    <div id="splashScreen">
+        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+        <h1>我的世界下载器</h1>
+        <p>V1.4</p>
+    </div>
 
     <div id="particles-js"></div>
 
+    <!-- 主界面 -->
     <div class="container">
-        <!-- Logo 区域（确保 src 指向你的 logo.png） -->
-        <img src="logo.png" alt="Minecraft Logo" class="logo" onerror="this.style.display='none'">
+        <div class="version-display">当前版本: <span>V1.4</span></div>
         
+        <img src="logo.png" alt="Minecraft Logo" class="logo" onerror="this.style.display='none'">
         <h1>我的世界下载器</h1>
         <p class="description">选择你想要下载的游戏版本</p>
         
         <button class="btn" onclick="openSelectModal()">选择版本下载</button>
+        <button class="btn" onclick="openAbout()" style="background:#333;">关于 / 更新日志</button>
     </div>
 
-    <!-- 选择弹窗 -->
+    <!-- 版本选择弹窗 -->
     <div class="modal-mask" id="selectModal">
         <div class="modal-box">
             <h2>选择版本</h2>
-            <p>请选择你要下载的 Minecraft 版本</p>
-            <button class="modal-btn international" onclick="goInternational()">国际基岩版</button>
-            <button class="modal-btn netease" onclick="goNetease()">网易版</button>
-            <button class="modal-btn cancel" onclick="closeSelectModal()">取消</button>
+            <p class="subtitle">请选择适合你的平台</p>
+            
+            <div class="version-card international" onclick="goInternational()">
+                <h3>🌍 国际基岩版</h3>
+                <p>适用于 iOS / Android / Win / Xbox。拥有原生商城和跨平台联机。</p>
+            </div>
+            
+            <div class="version-card netease" onclick="goNetease()">
+                <h3>🇨🇳 网易版 (中国版)</h3>
+                <p>国服特供，含租赁服、组件中心，社交属性强。</p>
+            </div>
+            
+            <div class="version-card java" onclick="goJava()">
+                <h3>☕ Java 版</h3>
+                <p>PC 原汁原味，支持 Mod、光影和数据包。</p>
+            </div>
+            
+            <button class="cancel-btn" onclick="closeSelectModal()">取消</button>
+        </div>
+    </div>
+
+    <!-- 关于 / 更新日志 页面 -->
+    <div id="aboutPage">
+        <div class="header">
+            <button class="back-btn" onclick="closeAbout()">返回</button>
+            <h1>关于 & 更新日志</h1>
+            <div></div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>应用信息</h2>
+                <p><strong>名称：</strong>我的世界下载器</p>
+                <p><strong>当前版本：</strong>V1.4 (重要更新)</p>
+                <p><strong>开发者：</strong>MC Web 工作室</p>
+                <p><strong>声明：</strong>本工具仅为方便玩家跳转官方下载页，不提供破解或修改内容。</p>
+            </div>
+            
+            <div class="section">
+                <h2>更新日志</h2>
+                
+                <div class="log-entry">
+                    <div class="log-date">2026.6.28</div>
+                    <div class="log-title">V1.4 (重要更新)</div>
+                    <div class="log-content">
+                        V1.4版本提前更新，增加启动页+版本详情和关于页/更新日志内置，修复了一些bug，请用户们及时更新，接下来我们将优化两周，两周后更新V1.5。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">2026.6.28</div>
+                    <div class="log-title">公告</div>
+                    <div class="log-content">
+                        预计将在下周开发在下下周发布V1.4大版本，为了保障用户不频繁更新软件本体所以我工作室决定每两周发布一个大版本，在此期间我们将利用热更衍生出大版本的子版本，但不会对用户们的使用造成不便。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">2026.6.27</div>
+                    <div class="log-title">V1.3B (普通更新)</div>
+                    <div class="log-content">
+                        修复了版本号图标丢失问题修复了一些bug。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">2026.6.27</div>
+                    <div class="log-title">V1.3A (重要更新)</div>
+                    <div class="log-content">
+                        更新热更问题,当新版本发布时进入软件后会提示刷新这样就无需在设置里清除缓存。修复了一些重要bug。左上角版本号图标丢失。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">2026.6.27</div>
+                    <div class="log-title">公告</div>
+                    <div class="log-content">
+                        预计将在下周开发并发行V1.3B和V1.4,敬请期待，发布有可能会推迟，但永远不会迟到。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">2026.6.27</div>
+                    <div class="log-title">V1.2 (普通更新)</div>
+                    <div class="log-content">
+                        更新版本号显示，更清楚清晰。出现热更失败版本号内暂时无法显示请耐心等待修复。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">2026.6.27</div>
+                    <div class="log-title">公告</div>
+                    <div class="log-content">
+                        各位用户，关于热更问题，我们已修复，请每次更新后清理缓存再试。我们为您的不便而深表歉意。我们还把图标更新成了官方经典图标，已增加辨识度，各位用户，请及时查看。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">-</div>
+                    <div class="log-title">V1.1 (重要修复)</div>
+                    <div class="log-content">
+                        修复了 GitHub Pages连接失败(ERR_CONNECTION_RESET)的严重Bug。实现网页资源云端加载，支持热更新。
+                    </div>
+                </div>
+                
+                <div class="log-entry">
+                    <div class="log-date">-</div>
+                    <div class="log-title">V1.0 (初始版本)</div>
+                    <div class="log-content">
+                        初始版本发布，实现基础WebView框架。出现无法连接bug。
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
+        // 启动页逻辑
+        setTimeout(function() {
+            const splash = document.getElementById('splashScreen');
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 500);
+        }, 1500);
+
+        // 粒子背景
         particlesJS('particles-js', {
             particles: {
                 number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: "#ffffff" },
+                color: { value: "#4CAF50" }, /* 改为绿色粒子 */
                 shape: { type: "circle" },
                 opacity: { value: 0.5 },
                 size: { value: 3, random: true },
-                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+                line_linked: { 
+                    enable: true, 
+                    distance: 150, 
+                    color: "#4CAF50", /* 连线也改为绿色 */
+                    opacity: 0.4, 
+                    width: 1 
+                },
                 move: { enable: true, speed: 6, direction: "none", out_mode: "out" }
             },
             interactivity: {
@@ -197,12 +446,15 @@
             }
         });
 
+        // 版本选择弹窗
         function openSelectModal() {
             document.getElementById('selectModal').classList.add('active');
         }
         function closeSelectModal() {
             document.getElementById('selectModal').classList.remove('active');
         }
+
+        // 跳转函数
         function goInternational() {
             window.open('https://www.minecraft.net/zh-hans/get-minecraft', '_blank');
             closeSelectModal();
@@ -211,7 +463,22 @@
             window.open('https://mc.163.com/', '_blank');
             closeSelectModal();
         }
+        function goJava() {
+            window.open('https://www.minecraft.net/zh-hans/get-minecraft/java', '_blank');
+            closeSelectModal();
+        }
 
+        // 关于页
+        function openAbout() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'block';
+        }
+        function closeAbout() {
+            document.getElementById('aboutPage').style.display = 'none';
+            document.querySelector('.container').style.display = 'flex';
+        }
+
+        // 点击遮罩关闭弹窗
         document.getElementById('selectModal').addEventListener('click', function(e) {
             if (e.target === this) closeSelectModal();
         });

@@ -1,5 +1,5 @@
 {
-  "version": "1.3B",
-  "description": "修复版本号图标丢失，修复了一些严重bug。",
+  "version": "1.4",
+  "description": "启动页+版本详情和关于页 / 更新日志内置",
   "forceUpdate": false
 }
