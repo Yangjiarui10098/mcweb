@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="app-version" content="1.4">
-    <title>我的世界下载器 V1.4</title>
+    <meta name="app-version" content="1.4A">
+    <title>我的世界下载器 V1.4A</title>
     <style>
         * {
             margin: 0;
@@ -70,22 +70,22 @@
             color: #aaa;
         }
 
-        /* 第二阶段：工作室商标 (新增) */
+        /* 第二阶段：工作室商标 */
         .studio-brand {
             position: absolute;
             display: flex;
             flex-direction: column;
             align-items: center;
-            opacity: 0; /* 默认隐藏 */
+            opacity: 0;
             animation: showStudio 1s ease-in-out forwards;
-            animation-delay: 1.5s; /* 等待第一阶段结束后再显示 */
+            animation-delay: 1.5s;
         }
 
         .studio-brand img {
-            width: 80px; /* 工作室 Logo 大小 */
+            width: 80px;
             height: auto;
             margin-bottom: 10px;
-            border-radius: 10px; /* 如果需要圆角可以保留 */
+            border-radius: 10px;
         }
 
         .studio-brand span {
@@ -130,18 +130,27 @@
             position: relative;
             padding-top: 60px;
             height: 100%;
-            display: none; /* 默认隐藏，启动页结束后显示 */
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        /* 左上角版本号 */
-        .version-display {
+        /* 顶部栏：版本号 + QQ群号 */
+        .top-bar {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 3;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .version-display {
             font-size: 14px;
             color: #aaa;
             background: rgba(0,0,0,0.5);
@@ -149,6 +158,20 @@
             border-radius: 5px;
         }
         .version-display span {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        /* 右上角 QQ群号 */
+        .qq-group {
+            font-size: 14px;
+            color: #fff;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #4CAF50;
+        }
+        .qq-group span {
             color: #4CAF50;
             font-weight: bold;
         }
@@ -341,7 +364,7 @@
         <div class="splash-main">
             <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
             <h1>我的世界下载器</h1>
-            <p>V1.4</p>
+            <p>V1.4A</p>
         </div>
         
         <!-- 第二阶段：工作室商标 -->
@@ -355,8 +378,12 @@
 
     <!-- 主界面 -->
     <div class="container" id="mainContainer">
-        <div class="version-display">当前版本: <span>V1.4</span></div>
-        
+        <!-- 顶部栏：版本号 + QQ群号 -->
+        <div class="top-bar">
+            <div class="version-display">当前版本: <span>V1.4A</span></div>
+            <div class="qq-group">官方QQ群: <span>1041254498</span></div>
+        </div>
+
         <img src="logo.png" alt="Minecraft Logo" class="logo" onerror="this.style.display='none'">
         <h1>我的世界下载器</h1>
         <p class="description">选择你想要下载的游戏版本</p>
@@ -402,8 +429,9 @@
             <div class="section">
                 <h2>应用信息</h2>
                 <p><strong>名称：</strong>我的世界下载器</p>
-                <p><strong>当前版本：</strong>V1.4 (重要更新)</p>
+                <p><strong>当前版本：</strong>V1.4A (1.4子版本)</p>
                 <p><strong>开发者：</strong>MC Web 工作室</p>
+                <p><strong>官方QQ群：</strong>1041254498</p>
                 <p><strong>声明：</strong>本工具仅为方便玩家跳转官方下载页，不提供破解或修改内容。</p>
             </div>
             
