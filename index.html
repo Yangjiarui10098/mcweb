@@ -34,20 +34,84 @@
             justify-content: center;
             align-items: center;
             color: white;
-            transition: opacity 0.5s;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
         }
-        #splashScreen img {
+
+        /* 启动页内容容器 */
+        .splash-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 第一阶段：App Logo 和版本号 */
+        .splash-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInOut 1.5s ease-in-out forwards;
+        }
+
+        .splash-main img {
             width: 100px;
             margin-bottom: 20px;
         }
-        #splashScreen h1 {
+
+        .splash-main h1 {
             color: #4CAF50;
             font-size: 28px;
+            margin-bottom: 5px;
         }
-        #splashScreen p {
+
+        .splash-main p {
             font-size: 16px;
             color: #aaa;
-            margin-top: 10px;
+        }
+
+        /* 第二阶段：工作室商标 (新增) */
+        .studio-brand {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0; /* 默认隐藏 */
+            animation: showStudio 1s ease-in-out forwards;
+            animation-delay: 1.5s; /* 等待第一阶段结束后再显示 */
+        }
+
+        .studio-brand img {
+            width: 80px; /* 工作室 Logo 大小 */
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 10px; /* 如果需要圆角可以保留 */
+        }
+
+        .studio-brand span {
+            font-size: 18px;
+            color: #4CAF50;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* 动画定义 */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.9); }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        @keyframes showStudio {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 2.5秒后整个启动页消失 */
+        #splashScreen.hide {
+            opacity: 0;
+            pointer-events: none;
         }
 
         /* 粒子背景 */
@@ -66,7 +130,7 @@
             position: relative;
             padding-top: 60px;
             height: 100%;
-            display: flex;
+            display: none; /* 默认隐藏，启动页结束后显示 */
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -273,15 +337,24 @@
 
     <!-- 启动页 -->
     <div id="splashScreen">
-        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
-        <h1>我的世界下载器</h1>
-        <p>V1.4</p>
+        <!-- 第一阶段：App 信息 -->
+        <div class="splash-main">
+            <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+            <h1>我的世界下载器</h1>
+            <p>V1.4</p>
+        </div>
+        
+        <!-- 第二阶段：工作室商标 -->
+        <div class="studio-brand">
+            <img src="studio_logo.png" alt="MC_Web Studio" onerror="this.style.display='none'">
+            <span>MC_Web工作室</span>
+        </div>
     </div>
 
     <div id="particles-js"></div>
 
     <!-- 主界面 -->
-    <div class="container">
+    <div class="container" id="mainContainer">
         <div class="version-display">当前版本: <span>V1.4</span></div>
         
         <img src="logo.png" alt="Minecraft Logo" class="logo" onerror="this.style.display='none'">
@@ -414,25 +487,28 @@
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
-        // 启动页逻辑
+        // 启动页逻辑 (2.5秒后隐藏启动页，显示主界面)
         setTimeout(function() {
             const splash = document.getElementById('splashScreen');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 1500);
+            splash.classList.add('hide');
+            
+            // 显示主界面
+            const mainContainer = document.getElementById('mainContainer');
+            mainContainer.style.display = 'flex';
+        }, 2500); // 2500毫秒 = 2.5秒
 
         // 粒子背景
         particlesJS('particles-js', {
             particles: {
                 number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: "#4CAF50" }, /* 改为绿色粒子 */
+                color: { value: "#4CAF50" },
                 shape: { type: "circle" },
                 opacity: { value: 0.5 },
                 size: { value: 3, random: true },
                 line_linked: { 
                     enable: true, 
                     distance: 150, 
-                    color: "#4CAF50", /* 连线也改为绿色 */
+                    color: "#4CAF50",
                     opacity: 0.4, 
                     width: 1 
                 },
@@ -470,12 +546,12 @@
 
         // 关于页
         function openAbout() {
-            document.querySelector('.container').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('aboutPage').style.display = 'block';
         }
         function closeAbout() {
             document.getElementById('aboutPage').style.display = 'none';
-            document.querySelector('.container').style.display = 'flex';
+            document.getElementById('mainContainer').style.display = 'flex';
         }
 
         // 点击遮罩关闭弹窗
